@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bot Poker Twister</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Bot Poker Twister <span class="sub">mode détaillé · <a href="index.html">revenir au mode rapide</a></span></h1>
+  <p class="warn">Outil d'entraînement et d'analyse. L'utiliser <strong>pendant</strong> une vraie partie en argent réel est interdit par les règles de Betclic (aide en temps réel) et peut entraîner la fermeture du compte.</p>
+</header>
+
+<main class="layout">
+  <section class="col">
+    <!-- 1. La table -->
+    <div class="card">
+      <h2>1. La table</h2>
+      <div class="row">
+        <label>Joueurs encore en jeu</label>
+        <div class="seg" id="nPlayers">
+          <button data-v="3" class="on">3</button><button data-v="2">2</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>Ta position <span class="hint" title="Bouton = le joueur qui parle en premier avant le flop et en dernier après (meilleure place). Petite/Grosse blinde = les 2 joueurs qui paient une mise obligatoire.">?</span></label>
+        <div class="seg" id="heroPos"></div>
+      </div>
+      <div class="row">
+        <label>Blindes (petite / grosse)</label>
+        <div class="inline">
+          <select id="blindLevel"></select>
+          <input type="number" id="sb" min="1" value="10"> /
+          <input type="number" id="bb" min="1" value="20">
+        </div>
+      </div>
+      <div class="row top-align">
+        <label>Jetons de chacun <span class="hint" title="Le nombre de jetons de chaque joueur AU DÉBUT de la main, avant de payer les blindes. Au départ d'un Twister : 500 chacun.">?</span></label>
+        <div id="stacks" class="stacks"></div>
+      </div>
+      <details class="more">
+        <summary>Réglages avancés</summary>
+        <div class="row">
+          <label>Répartition des gains</label>
+          <select id="payouts">
+            <option value="1,0,0">Le gagnant prend tout (cas normal)</option>
+            <option value="0.8,0.12,0.08">Gros jackpot : 2e et 3e aussi payés</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Ante (mise de chaque joueur)</label>
+          <input type="number" id="ante" min="0" value="0">
+        </div>
+      </details>
+      <div class="row">
+        <label>Style des adversaires <span class="hint" title="Serré = ils jouent peu de mains. Agressif = ils misent et font tapis avec beaucoup de mains.">?</span></label>
+        <div class="seg" id="style">
+          <button data-v="tight">Serré</button><button data-v="normal" class="on">Normal</button><button data-v="loose">Agressif</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Les cartes -->
+    <div class="card">
+      <h2>2. Les cartes</h2>
+      <div class="slots">
+        <div class="slotgroup" data-target="hero">
+          <div class="slotlabel">Tes cartes</div>
+          <div class="slotrow" id="heroSlots"></div>
+        </div>
+        <div class="slotgroup" data-target="board">
+          <div class="slotlabel">Cartes du milieu (flop, turn, river)</div>
+          <div class="slotrow" id="boardSlots"></div>
+        </div>
+      </div>
+      <p class="small" id="pickHint">Clique sur tes 2 cartes, puis sur les cartes du milieu s'il y en a.</p>
+      <div id="picker" class="picker"></div>
+      <button class="ghost" id="clearCards">Effacer les cartes</button>
+    </div>
+  </section>
+
+  <section class="col">
+    <!-- 3a. Avant le flop -->
+    <div class="card" id="preCard">
+      <h2>3. Ce que les autres ont fait</h2>
+      <p class="small">Avant le flop, sur cette main. « Pas encore joué » = il parle après toi.</p>
+      <div id="oppActions"></div>
+      <div class="row">
+        <label>Tu avais déjà mis <span class="hint" title="Seulement si tu avais déjà relancé ou payé, et qu'un adversaire a relancé derrière toi. Sinon laisse 0.">?</span></label>
+        <div class="inline"><input type="number" id="heroPrev" min="0" value="0"> jetons</div>
+      </div>
+    </div>
+
+    <!-- 3b. Après le flop -->
+    <div class="card hidden" id="postCard">
+      <h2>3. La situation sur ce tour</h2>
+      <div class="grid2">
+        <div><label>Pot total au milieu <span class="hint" title="Tous les jetons au milieu, y compris la mise que l'adversaire vient de faire.">?</span></label><input type="number" id="pot" min="0" value="120"></div>
+        <div><label>À payer pour suivre <span class="hint" title="0 si personne n'a misé sur ce tour.">?</span></label><input type="number" id="toCall" min="0" value="0"></div>
+        <div><label>Tes jetons restants</label><input type="number" id="heroStack" min="0" value="440"></div>
+        <div><label>Jetons restants de l'adversaire</label><input type="number" id="oppStack" min="0" value="440"></div>
+      </div>
+      <div class="row">
+        <label>Adversaires encore dans le coup</label>
+        <div class="seg" id="nOpp"><button data-v="1" class="on">1</button><button data-v="2">2</button></div>
+      </div>
+      <div class="row">
+        <label>Avant le flop, l'adversaire…</label>
+        <select id="villainPre">
+          <option value="raise">a relancé</option>
+          <option value="call" selected>a suivi ma relance</option>
+          <option value="limp">a juste payé la grosse blinde (limp)</option>
+          <option value="check">a checké de grosse blinde</option>
+          <option value="3bet">a sur-relancé</option>
+        </select>
+      </div>
+      <label class="check"><input type="checkbox" id="heroWasRaiser" checked> C'est moi qui ai relancé en dernier avant le flop</label>
+      <label class="check"><input type="checkbox" id="earlierAggro"> L'adversaire a déjà misé sur un tour précédent</label>
+    </div>
+
+    <!-- Résultat -->
+    <div class="card result" id="result">
+      <div class="placeholder">Choisis tes 2 cartes pour voir la décision.</div>
+    </div>
+
+    <details class="card lexique">
+      <summary><h2>Petit lexique</h2></summary>
+      <dl>
+        <dt>BB (grosse blinde)</dt><dd>L'unité de mesure. « 10 BB » = tu as 10 fois la grosse blinde en jetons.</dd>
+        <dt>Tapis (all-in)</dt><dd>Mettre tous ses jetons au milieu.</dd>
+        <dt>Limp</dt><dd>Payer juste la grosse blinde au lieu de relancer.</dd>
+        <dt>Range</dt><dd>L'ensemble des mains qu'un joueur peut avoir dans une situation (ex. « les 30 % meilleures mains »).</dd>
+        <dt>Équité / chances</dt><dd>Le pourcentage de fois où ta main gagne si on va jusqu'au bout.</dd>
+        <dt>Cote du pot</dt><dd>Les chances minimum qu'il te faut pour que suivre soit rentable : ce que tu paies ÷ le pot final.</dd>
+        <dt>EV (gain moyen)</dt><dd>Ce que te rapporte une décision en moyenne si tu la prends des milliers de fois.</dd>
+        <dt>Équilibre de Nash</dt><dd>La stratégie qu'aucun adversaire ne peut exploiter. Le bot l'utilise quand il reste peu de jetons.</dd>
+        <dt>ICM</dt><dd>Quand plusieurs places sont payées, perdre ses jetons coûte plus que d'en gagner ne rapporte : il faut être plus prudent.</dd>
+        <dt>Position</dt><dd>Parler après l'adversaire est un avantage : tu vois ce qu'il fait avant de décider.</dd>
+      </dl>
+    </details>
+  </section>
+</main>
+
+<script src="js/cards.js"></script>
+<script src="js/equity_data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/preflop.js"></script>
+<script src="js/postflop.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

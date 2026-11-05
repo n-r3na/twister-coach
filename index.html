@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Twister Coach</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Twister">
+<meta name="theme-color" content="#2747d6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=DM+Serif+Display&display=swap">
+<link rel="stylesheet" href="css/quick.css">
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="brand">Twister <span>Coach</span></div>
+    <button class="fsbtn" id="fullscreen" aria-label="Plein écran" title="Plein écran" hidden>⛶</button>
+    <div class="seg" id="players" role="group" aria-label="Joueurs encore en jeu">
+      <button id="p3" data-n="3" class="on" aria-pressed="true">3 joueurs</button>
+      <button id="p2" data-n="2" aria-pressed="false">2 joueurs</button>
+    </div>
+  </header>
+
+  <section class="setup" aria-label="Tapis et blindes">
+    <div class="stackrow">
+      <label for="stack" class="zlabel">Mes jetons</label>
+      <div class="stackval"><output id="stackOut">500</output><span id="stackBB">25 BB</span></div>
+    </div>
+    <input type="range" id="stack" min="10" max="1480" step="10" value="500">
+    <div class="setuprow">
+      <div class="blinds" role="group" aria-label="Blindes">
+        <span class="zlabel">Blindes</span>
+        <button id="blindDown" aria-label="Blindes plus petites">‹</button>
+        <output id="blindOut">10 / 20</output>
+        <button id="blindUp" aria-label="Blindes plus grandes">›</button>
+      </div>
+      <div class="opps" id="oppsOut"></div>
+    </div>
+  </section>
+
+  <section class="table" aria-label="Cartes">
+    <div class="zone">
+      <div class="zlabel">Ta main</div>
+      <div class="slots" id="heroSlots"></div>
+    </div>
+    <div class="zone">
+      <div class="zlabel">Le milieu <span id="streetName"></span></div>
+      <div class="slots board" id="boardSlots"></div>
+    </div>
+  </section>
+
+  <section class="verdict idle" id="verdict" aria-live="polite">
+    <div class="vword" id="vTitle">Choisis tes 2 cartes</div>
+    <div class="vaction" id="vAction">Touche une valeur, puis une couleur. Au clavier : « a » puis « s » pour l'As de pique.</div>
+    <div class="meter" id="meter" hidden>
+      <div class="mtrack"><div class="mfill" id="mFill"></div><div class="mmark" id="mMark"></div></div>
+      <div class="mlabels"><span id="mText"></span><span id="mNeed"></span></div>
+    </div>
+    <div class="chips" id="vChips"></div>
+    <p class="vwhy" id="vWhy"></p>
+  </section>
+
+  <section class="picker" aria-label="Choisir une carte">
+    <div class="ranks" id="ranks"></div>
+    <div class="suits" id="suits"></div>
+    <div class="tools">
+      <button class="ghost" id="undo">Effacer la dernière</button>
+      <button class="primary" id="reset">Nouvelle main</button>
+    </div>
+  </section>
+
+  <section class="villain" aria-label="Ce que fait l'adversaire">
+    <div class="zlabel">L'adversaire…</div>
+    <div class="vact" id="villain" role="group">
+      <button data-a="none" class="on" aria-pressed="true">Rien</button>
+      <button data-a="call" aria-pressed="false">Suit</button>
+      <button data-a="raise" aria-pressed="false">Relance</button>
+      <button data-a="allin" aria-pressed="false">Tapis</button>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Réglé pour des adversaires agressifs, 500 jetons, beaucoup de tapis. <a href="avance.html">Mode détaillé</a> pour entrer les jetons et les mises.</p>
+    <p>Outil d'entraînement : l'aide en temps réel pendant une partie en argent réel est interdite par Betclic.</p>
+  </footer>
+</div>
+
+<script src="js/cards.js"></script>
+<script src="js/equity_data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/preflop.js"></script>
+<script src="js/postflop.js"></script>
+<script src="js/quick.js"></script>
+<script src="js/quick-ui.js"></script>
+</body>
+</html>
